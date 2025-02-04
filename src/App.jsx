@@ -51,32 +51,40 @@ const Footer = () => (
 
 // Uusi anekdootti
 const CreateNew = (props) => {
-  const { value: content, onChange: setContent } = useField('text');
-  const { value: author, onChange: setAuthor } = useField('text');
-  const { value: info, onChange: setInfo } = useField('text');
+  const { value: content, onChange: handleContentChange, reset: resetContent } = useField('text');
+  const { value: author, onChange: handleAuthorChange, reset: resetAuthor } = useField('text');
+  const { value: info, onChange: handleInfoChange, reset: resetInfo } = useField('text');
   const [notification, setNotification] = useState('');
-  const navigate = useNavigate(); // React Routerin hook navigointiin
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     const newAnecdote = {
       content,
       author,
       info,
       votes: 0,
-      id: Math.round(Math.random() * 10000) // Luodaan uniikki id
+      id: Math.round(Math.random() * 10000),
     };
 
     props.addNew(newAnecdote);
 
-    // Ilmoitus uuden anekdootin luomisesta
+    // Ilmoitus onnistuneesta lisäyksestä
     setNotification(`a new anecdote: "${newAnecdote.content}" created`);
 
-    // Siirretään takaisin anekdoottien listaan 5 sekunnin kuluttua
+    // Poistetaan ilmoitus ja siirretään anekdoottien listaan 5 sekunnin kuluttua
     setTimeout(() => {
       setNotification('');
       navigate('/');
     }, 5000);
+  };
+
+  // Lomakkeen kenttien tyhjentäminen
+  const handleReset = () => {
+    resetContent();
+    resetAuthor();
+    resetInfo();
   };
 
   return (
@@ -85,35 +93,25 @@ const CreateNew = (props) => {
       <form onSubmit={handleSubmit}>
         <div>
           content
-          <input 
-            name='content' 
-            type={content.type} 
-            value={content} 
-            onChange={setContent} 
-          />
+          <input type="text" value={content} onChange={handleContentChange} />
         </div>
         <div>
           author
-          <input 
-            name='author' 
-            type={author.type} 
-            value={author} 
-            onChange={setAuthor} 
-          />
+          <input type="text" value={author} onChange={handleAuthorChange} />
         </div>
         <div>
           url for more info
-          <input 
-            name='info' 
-            type={info.type} 
-            value={info} 
-            onChange={setInfo} 
-          />
+          <input type="text" value={info} onChange={handleInfoChange} />
         </div>
         <button>Create</button>
       </form>
 
-      {/* Notifikaatio */}
+      {/* Tyhjennä lomake -nappi */}
+      <button type="button" onClick={handleReset}>
+        Reset
+      </button>
+
+      {/* Näytetään notifikaatio */}
       {notification && <p>{notification}</p>}
     </div>
   );
