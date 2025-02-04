@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { BrowserRouter as Router, Route, Link, Routes, useNavigate, useParams } from 'react-router-dom';
+import { useField } from './hooks'; // Tuodaan useField-hook
 
 // Menu
 const Menu = () => {
@@ -50,9 +51,9 @@ const Footer = () => (
 
 // Uusi anekdootti
 const CreateNew = (props) => {
-  const [content, setContent] = useState('');
-  const [author, setAuthor] = useState('');
-  const [info, setInfo] = useState('');
+  const { value: content, onChange: setContent } = useField('text');
+  const { value: author, onChange: setAuthor } = useField('text');
+  const { value: info, onChange: setInfo } = useField('text');
   const [notification, setNotification] = useState('');
   const navigate = useNavigate(); // React Routerin hook navigointiin
 
@@ -84,15 +85,30 @@ const CreateNew = (props) => {
       <form onSubmit={handleSubmit}>
         <div>
           content
-          <input name='content' value={content} onChange={(e) => setContent(e.target.value)} />
+          <input 
+            name='content' 
+            type={content.type} 
+            value={content} 
+            onChange={setContent} 
+          />
         </div>
         <div>
           author
-          <input name='author' value={author} onChange={(e) => setAuthor(e.target.value)} />
+          <input 
+            name='author' 
+            type={author.type} 
+            value={author} 
+            onChange={setAuthor} 
+          />
         </div>
         <div>
           url for more info
-          <input name='info' value={info} onChange={(e) => setInfo(e.target.value)} />
+          <input 
+            name='info' 
+            type={info.type} 
+            value={info} 
+            onChange={setInfo} 
+          />
         </div>
         <button>Create</button>
       </form>
